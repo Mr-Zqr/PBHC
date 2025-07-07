@@ -76,6 +76,7 @@ def foot_detect(positions, thres=0.002):
     return feet_l, feet_r
 
 def process_motion(key_names, key_name_to_pkls, cfg):
+    print("process_motion key_names: ", key_names)
     device = torch.device("cpu")
 
     humanoid_fk = Humanoid_Batch(cfg.robot)  # load forward kinematics model
@@ -212,8 +213,9 @@ def main(cfg: DictConfig) -> None:
     key_name_to_pkls = {"0-" + "_".join(data_path.split("/")[3:]).replace(".npz", ""): data_path for data_path in
                         all_pkls}
     key_names = ["0-" + "_".join(data_path.split("/")[3:]).replace(".npz", "") for data_path in all_pkls]
+    print("key_names: ", key_names)
     if not cfg.get("fit_all", False):
-        key_names = ["0-motion"]
+        key_names = ["0-B1 - stand to walk_poses"]
 
     from multiprocessing import Pool
     jobs = key_names
@@ -230,7 +232,7 @@ def main(cfg: DictConfig) -> None:
         except KeyboardInterrupt:
             pool.terminate()
             pool.join()
-        all_data = {}
+            all_data = {}
         for data_dict in all_data_list:
             all_data.update(data_dict)
     # import ipdb; ipdb.set_trace()

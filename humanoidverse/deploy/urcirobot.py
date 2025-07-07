@@ -128,13 +128,13 @@ class URCIRobot:
                         self.old_act = self.act.copy()
                     # print('Debug: ',self.Obs()['actor_obs'])
                     # breakpoint()
-
                     
                     # breakpoint()
                 
                 self.UpdateObs()
                 
                 action = policy_fn(self.Obs())[0]
+
                 
                 if self.BYPASS_ACT: action = np.zeros_like(action)
                 
@@ -269,6 +269,8 @@ class URCIRobot:
         for obs_key, obs_config in obs_cfg_obs.obs_dict.items():
             if not obs_key=='actor_obs': continue
             obs_keys = sorted(obs_config)
+            print("obs_keys:", obs_keys)
+            print("phase: ", self.ref_motion_phase)
             # (Pdb) sorted(obs_config)
             # ['actions', 'base_ang_vel', 'base_lin_vel', 'dif_local_rigid_body_pos', 'dof_pos', 'dof_vel', 'dr_base_com', 'dr_ctrl_delay', 'dr_friction', 'dr_kd', 'dr_kp', 'dr_link_mass', 'history_critic', 'local_ref_rigid_body_pos', 'projected_gravity', 'ref_motion_phase']
             
@@ -637,6 +639,7 @@ class URCIRobot:
         assert "history" in obs_cfg_obs.obs_auxiliary.keys()
         history_config = obs_cfg_obs.obs_auxiliary['history']
         history_key_list = history_config.keys()
+        # print("*history_key_list:", history_key_list)
         history_tensors = []
         for key in sorted(history_config.keys()):
             history_length = history_config[key]
@@ -651,6 +654,7 @@ class URCIRobot:
         history_config = obs_cfg_obs.obs_auxiliary['short_history']
         history_key_list = history_config.keys()
         history_tensors = []
+        # print("**short_history_key_list:", history_key_list)
         for key in sorted(history_config.keys()):
             history_length = history_config[key]
             history_tensor = self.history_handler.query(key)[:, :history_length]
@@ -664,6 +668,7 @@ class URCIRobot:
         history_config = obs_cfg_obs.obs_auxiliary['long_history']
         history_key_list = history_config.keys()
         history_tensors = []
+        # print("***long_history_key_list:", history_key_list)
         for key in sorted(history_config.keys()):
             history_length = history_config[key]
             history_tensor = self.history_handler.query(key)[:, :history_length]
@@ -677,6 +682,7 @@ class URCIRobot:
         history_config = obs_cfg_obs.obs_auxiliary['history_actor']
         history_key_list = history_config.keys()
         history_tensors = []
+        # print("**history_key_list:", history_key_list)
         for key in sorted(history_config.keys()):
             history_length = history_config[key]
             history_tensor = self.history_handler.query(key)[:, :history_length]

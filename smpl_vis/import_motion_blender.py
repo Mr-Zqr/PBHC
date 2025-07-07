@@ -4,8 +4,8 @@ from pathlib import Path
 from scipy.spatial.transform import Rotation as sRot
 import numpy as np
 
-npz_path = "Path_TO_NPZ"
-body_model_type = "SMPL-male"
+npz_path = "/home/zqr/devel/dataset/ACCAD/ACCAD/Female1Walking_c3d/B1_stand_to_walk_poses.npz"
+body_model_type = "SMPL-female"
 gender = "neutral"
 fps = 30 
 

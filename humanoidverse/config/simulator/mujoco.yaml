@@ -8,11 +8,16 @@ simulator:
     name: "mujoco"
     terrain: ${terrain}
     sim:
-      fps: 500
-      control_decimation: 10
-      # fps: 200
-      # control_decimation: 4
+      # fps: 500
+      # control_decimation: 10
+      fps: 1000
+      control_decimation: 20
+      # fps: 150
+      # control_decimation: 3
       render_mode: "human" # [None, "human", "rgb_array"]
+      render_fps: 60           # 渲染频率 60Hz
+      realtime_sync: true      # 启用实时同步
+      # render_decimation: 17  
     scene:
       num_envs: ${num_envs}
       env_spacing: ${env.config.env_spacing}

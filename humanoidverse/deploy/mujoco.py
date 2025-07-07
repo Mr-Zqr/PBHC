@@ -99,11 +99,8 @@ class MViewerPlugin:
         if self.is_render:
             if self.viewer.is_running():
                 self.viewer.sync()
-            
-                # breakpoint()
             else:
                 raise RobotExitException("Mujoco Robot Exit")
-        ...
 
 
 class ViewerPlugin:
@@ -249,6 +246,13 @@ class MujocoRobot(URCIRobot, ViewerPlugin):
         assert self.dt == self.decimation * self.sim_dt
         # self._subtimer = 0
         
+        # 添加实时渲染控制
+        self.render_fps = cfg.simulator.config.sim.get('render_fps', 60)  # 渲染频率
+        self.render_decimation = max(1, int(cfg.simulator.config.sim.fps / self.render_fps))  # 渲染抽取率
+        self.render_counter = 0
+        self.last_render_time = time.time()
+        self.realtime_sync = cfg.simulator.config.sim.get('realtime_sync', True)  # 实时同步开关
+        
         
         
         self.model = mujoco.MjModel.from_xml_path(os.path.join(cfg.robot.asset.asset_root, cfg.robot.asset.xml_file)) # type: ignore
@@ -307,6 +311,7 @@ class MujocoRobot(URCIRobot, ViewerPlugin):
         
         
         logger.info(f"decimation: {self.decimation}, sim_dt: {self.sim_dt}, dt: {self.dt}")
+        logger.info(f"render_fps: {self.render_fps}, render_decimation: {self.render_decimation}, realtime_sync: {self.realtime_sync}")
         logger.info(f"xml_file: {cfg.robot.asset.xml_file}")
         # print(self.decimation, self.sim_dt, self.dt)
         self.Reset()
@@ -323,6 +328,10 @@ class MujocoRobot(URCIRobot, ViewerPlugin):
         self.data.qpos[7:] = self.dof_init_pose
         self.data.qvel[:]   = 0
         self.cmd = np.array(self.cfg.deploy.defcmd)
+        
+        # 重置渲染计数器
+        self.render_counter = 0
+        self.last_render_time = time.time()
         
         if self.RAND_IMU:
             self.noise_imu.reset()
@@ -474,7 +483,23 @@ class MujocoRobot(URCIRobot, ViewerPlugin):
                 self.noise_imu.step()
             
             self.tracking()
-            self.render_step()
+            
+            # 控制渲染频率和实时同步
+            self.render_counter += 1
+            if self.render_counter >= self.render_decimation:
+                self.render_counter = 0
+                self.render_step()
+                
+                # 实时同步
+                if self.realtime_sync:
+                    current_time = time.time()
+                    expected_interval = 1.0 / self.render_fps
+                    elapsed = current_time - self.last_render_time
+                    
+                    if elapsed < expected_interval:
+                        time.sleep(expected_interval - elapsed)
+                    
+                    self.last_render_time = time.time()
             # self._subtimer += 1
         
         

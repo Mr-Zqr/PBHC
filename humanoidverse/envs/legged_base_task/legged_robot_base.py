@@ -23,9 +23,6 @@ from humanoidverse.envs.env_utils.visualization import Point
 from loguru import logger
 import copy
 
-
-
-
 class LeggedRobotBase(BaseTask):
     def __init__(self, config, device):
         self.init_done = False
