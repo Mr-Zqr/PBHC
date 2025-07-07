@@ -9,8 +9,8 @@ rewards:
   set_reward_date: 20250417
   only_positive_rewards: False
   reward_scales:
+      # teleop_contact_mask: 0.0
       teleop_contact_mask: 0.5
-      # teleop_contact_mask: 0.5
       teleop_max_joint_position: 1.0
 
       teleop_body_position_extend: 1.0
