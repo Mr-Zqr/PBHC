@@ -9,7 +9,7 @@ import os
 
 def main():
     # 默认文件路径
-    pkl_file = "dance1_subject2_enhanced.pkl"
+    pkl_file = "/home/zqr/devel/PBHC/motion_source/lafan_pkl_contact_mask/dance1_subject2_0_3945_cont_mask.pkl"
     urdf_file = "/home/zqr/devel/PBHC/description/robots/g1/g1_23dof_lock_wrist.urdf"
     
     # 检查文件是否存在
